@@ -12,7 +12,7 @@ h2 {
 #menu li {
 	display: inline-block;
 	list-style: none;
-	font: bold 20px sans-serif;
+	font: bold 15px sans-serif;
 }
 
 #menu li > a {
@@ -20,7 +20,7 @@ h2 {
 	margin: 0 10px 0 0;
 	padding: 4px 10px;
 	width: 100px;
-	background: #7C007C;
+	background: #42036F;
 	color: #FFF;
 	text-align: center;
 	text-decoration: none;
@@ -29,7 +29,7 @@ h2 {
 }
 
 #menu li a:hover {
-	background: #993399
+	background: #AF3BD4;
 }
 
 #menu li > div {
@@ -53,7 +53,7 @@ h2 {
 	position: relative;
 	display: block;
 	margin: 0;
-	padding: 5px 10px;
+	padding: 3px 10px;
 	width: auto;
 	text-align: left;
 	text-decoration: none;
@@ -69,6 +69,6 @@ h2 {
 }
 
 #menu div div a:hover {
-	background: ##BF7EBF;
+	background: #8106A9;
 	color: #FFF; 
 }

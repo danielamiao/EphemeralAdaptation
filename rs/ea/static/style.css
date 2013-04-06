@@ -1,0 +1,74 @@
+h2 {
+	margin: 20px auto;
+	text-align: center;
+	font: bold 20px sans-serif;
+}
+
+#menu {
+	margin: auto;
+	text-align: center;
+}
+
+#menu li {
+	display: inline-block;
+	list-style: none;
+	font: bold 20px sans-serif;
+}
+
+#menu li > a {
+	display: block;
+	margin: 0 10px 0 0;
+	padding: 4px 10px;
+	width: 100px;
+	background: #7C007C;
+	color: #FFF;
+	text-align: center;
+	text-decoration: none;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+#menu li a:hover {
+	background: #993399
+}
+
+#menu li > div {
+	position: absolute;
+	visibility: hidden;
+	margin: 0;
+	padding: 0;
+}
+
+#menu div.group {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	border: 1px solid black;
+	border-radius: 10px;
+	background: #FFFFFF;
+	z-index: 1;
+}
+
+#menu div div a {
+	position: relative;
+	display: block;
+	margin: 0;
+	padding: 5px 10px;
+	width: auto;
+	text-align: left;
+	text-decoration: none;
+	color: black; 
+	font: 15px verdana;
+	border-radius: 8px;
+}
+
+#menu div div a.fadein {
+	opacity: 0;
+	-webkit-transition: opacity 0.5s ease-in; //for chrome 
+	-moz-transition: opacity 0.5s ease-in; //for mozilla firefox
+}
+
+#menu div div a:hover {
+	background: ##BF7EBF;
+	color: #FFF; 
+}

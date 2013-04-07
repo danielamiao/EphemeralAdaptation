@@ -159,3 +159,9 @@ LOGGING = {
     }
 }
 
+try:
+# NOTE: Load development or production settings as needed.
+	from local_settings import *
+except ImportError:
+	pass
+

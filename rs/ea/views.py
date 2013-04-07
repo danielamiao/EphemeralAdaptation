@@ -14,8 +14,10 @@ for row in menu_groups_file:
     menu_groups.append(row.strip().split(','))
 menu_groups_file.close()
 
-# define a global variable for task sequence
+# define global variables
+INIT = ''
 control_sequence = []
+frequent_items = [[], [], []] # 3 possible permutations of frequent items
 
 def index(request):
     return render_to_response('index.html')
@@ -27,10 +29,19 @@ def record(request):
     return HttpResponse("yay")
 
 def control(request, tut):
-    # generate a random task sequence, 126 in length
-    global control_sequence
-    control_sequence = gen_sequence()
-    
+    # if sequence not generated, generate a random task sequence, 126 in length
+    # if it is generated, permute it so that sequence doesn't change, but menu item 
+    # is simply switched to the same item of a different menu
+    global control_sequence, INIT
+    if not control_sequence: 
+        control_sequence = gen_sequence()
+        INIT = 'control'
+    else:
+        if INIT == 'control':
+            sequence = control_sequence;
+        else:
+            sequence = permute_sequence(control_sequence)
+
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
         del control_sequence[8:]
@@ -39,14 +50,20 @@ def control(request, tut):
                               context_instance=RequestContext(request))
 
 def adaptive(request, tut):
-    # need to permute the sequence such that sequence don't change, but menu item is simply
-    # switched to the same item of a different menu (see function permute_sequence for details)
-    global control_sequence
-    sequence = permute_sequence(control_sequence)
-    
-    # get the predictions based on the sequence, and a given accuracy percentage
-    predictions = get_predictions(sequence, accuracy=79)
-    
+    global control_sequence, INIT
+    if not control_sequence: 
+        control_sequence = gen_sequence()
+        sequence = control_sequence
+        predictions = get_predictions(sequence, permute_no=0)
+        INIT = 'adaptive'
+    else:
+        if INIT == 'adaptive':
+            sequence = control_sequence;
+            predictions = get_predictions(sequence, permute_no=0)
+        else:
+            (sequence, permute_by) = permute_sequence(control_sequence)
+            predictions = get_predictions(sequence, permute_no=permute_by)
+
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
         del sequence[8:]
@@ -62,31 +79,60 @@ def exit_survey(request):
 # A zipf distribution is used over the 8 items such that frequency is: 15, 8, 5, 4, 3, 3, 2, 2
 # Altogether, this makes a task sequence of length 126 
 def gen_sequence():
+    global frequent_items
     distribution = [15, 8, 5, 4, 3, 3, 2, 2]
     sequence = []
+    menu_index = 0
     # Menu 1
     menu1_list = range(0,16)
     sampled_menu1_list = random.sample(menu1_list, 8)
     for index, item in enumerate(sampled_menu1_list):
         for _ in itertools.repeat(None, distribution[index]):
-            sequence.append(item)
-            
+            sequence.append(item)   
+    
     # Menu 2
     menu2_list = range(16,32)
     sampled_menu2_list = random.sample(menu2_list, 8)
     for index, item in enumerate(sampled_menu2_list):
         for _ in itertools.repeat(None, distribution[index]):
             sequence.append(item)
-            
+    
     # Menu 3
     menu3_list = range(32,48)
     sampled_menu3_list = random.sample(menu3_list, 8)
     for index, item in enumerate(sampled_menu3_list):
         for _ in itertools.repeat(None, distribution[index]):
             sequence.append(item)
-            
+    
+    populate_freq_items(sampled_menu1_list[:3], sampled_menu2_list[:3], sampled_menu3_list[:3])
     random.shuffle(sequence)
     return sequence
+
+# populate the frequent_items list so that we have all permutations of frequent items
+# available to us, the input parameters are the default frequent items for control sequence
+# frequent_items is populated as such: frequent_items = [[control_sequence],[permute_by_1],[permute_by_2]]
+def populate_freq_items(menu1, menu2, menu3):
+    global frequent_items
+    control_seq_freq_items = [menu1[:], menu2[:], menu3[:]]
+    
+    menu1 = permute_by_one(menu1)
+    menu2 = permute_by_one(menu2)
+    menu3 = permute_by_one(menu3)
+    
+    permute_one_freq_items = [menu3[:], menu1[:], menu2[:]]
+    menu1 = permute_by_one(menu1)
+    menu2 = permute_by_one(menu2)
+    menu3 = permute_by_one(menu3)
+    
+    permute_two_freq_items = [menu2[:], menu3[:], menu1[:]]
+    frequent_items = [control_seq_freq_items, permute_one_freq_items, permute_two_freq_items]    
+    #print frequent_items
+    
+def permute_by_one(menu): 
+    new_menu = []
+    for item in menu:
+        new_menu.append((item + 16) % 48)
+    return new_menu
 
 # Permute the sequence for the adaptive condition to prevent individuals from remembering 
 # the sequence across conditions. For examples, if the first selection in the control 
@@ -94,65 +140,74 @@ def gen_sequence():
 # be either Menu 2 > Item 3 or Menu 3 > Item 3
 def permute_sequence(sequence):
     permuted_sequence = []
+    permute_by = random.randint(1,2)
+    
+    # the idea is to add either 16 or 32 to the sequence number randomly, then mod 48 to 
+    # ensure it stays within the range [0,47]
     for elem in sequence:
-        # the idea is to add either 16 or 32 to the sequence number randomly, then mod 48 to 
-        # ensure it stays within the range [0,47]
-        permuted_sequence.append((elem + 16 * random.randint(1,2)) % 48) 
-    return permuted_sequence
+        permuted_sequence.append((elem + 16 * permute_by) % 48) 
+    return (permuted_sequence, permute_by)
 
-def get_predictions(sequence, accuracy):
-    predictions = generate_predictions(sequence)
-    adjusted_predictions = adjust_predictions(predictions, accuracy)
-    return adjusted_predictions
-
-def generate_predictions(sequence):
+def get_predictions(sequence, permute_no):
     predictions = []
+    recent_item = dict.fromkeys([0,1,2])
+    #import pdb; pdb.set_trace()
     for item in sequence:
         if item < 16:
-            predicted_set = random.sample(range(0,16), 3)
-            if item not in predicted_set:
-                predicted_set[0] = item
-            predictions.append(predicted_set)
+            menu = 0
         elif item < 32:
-            predicted_set = random.sample(range(16,32), 3)
-            if item not in predicted_set:
-                predicted_set[0] = item
-            predictions.append(predicted_set)            
+            menu = 1
         elif item < 48:
-            predicted_set = random.sample(range(32,48), 3)
-            if item not in predicted_set:
-                predicted_set[0] = item
-            predictions.append(predicted_set)    
+            menu = 2
         else:
             predictions = []
             return predictions
-    return predictions
+        
+        predicted_set = frequent_items[permute_no][menu][:]
+        if recent_item[menu] is not None and recent_item[menu] not in predicted_set:
+            predicted_set[2] = recent_item[menu]
+        recent_item[menu] = item
+        predictions.append(predicted_set)
+    
+    adjusted_predictions = adjust_predictions(sequence, predictions, recent_item)
+    return adjusted_predictions
 
-def adjust_predictions(predictions, accuracy):
-    length = len(predictions)
-    num_adjust = int((1-float(accuracy)/100) * length)
-    items_adjust = random.sample(range(0,length),num_adjust)
+# adjust predictions so that accuracy is 79%, as reported in the paper
+def adjust_predictions(sequence, predictions, recent_item):
+    target_accuracy = 0.79
+    cur_accuracy = 0.645
+    length = len(sequence)
+    
+    wrong_predictions = []    
+    for index in xrange(length):
+        if sequence[index] not in predictions[index]:
+            wrong_predictions.append(index)
+    print len(wrong_predictions)
+    num_adjust = int((target_accuracy - cur_accuracy) * len(sequence))
+    items_adjust = random.sample(wrong_predictions,num_adjust)
     for item in items_adjust:
-        first_num = predictions[item][0]
-        if first_num < 16:
-            list_a = range(0,16)
-            for elem in predictions[item]:
-                list_a.remove(elem)
-            predictions[item] = random.sample(list_a,3)
-        elif first_num < 32:
-            list_b = range(16,32)
-            for elem in predictions[item]:
-                list_b.remove(elem)
-            predictions[item] = random.sample(list_b,3)
-        elif first_num < 48:
-            list_c = range(32,48)
-            for elem in predictions[item]:
-                list_c.remove(elem)
-            predictions[item] = random.sample(list_c,3)
+        if sequence[item] < 16:
+            menu = 0
+        elif sequence[item] < 32:
+            menu = 1
+        elif sequence[item] < 48:
+            menu = 2
+        
+        if predictions[item][2] == recent_item[menu]:
+            predictions[item][2] = sequence[item]
         else:
-            return None
+            predictions[item][1] = sequence[item]
+            
     return predictions
     
-    
+# count the actual accuracy
+def accuracy_count(sequence,predictions):
+    count = 0
+    for index,item in enumerate(sequence):
+        if item in predictions[index]:
+            count = count + 1
+    return count
+
+
     
     

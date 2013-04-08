@@ -35,18 +35,19 @@ def control(request, tut):
     global control_sequence, INIT
     if not control_sequence: 
         control_sequence = gen_sequence()
+	sequence = control_sequence
         INIT = 'control'
     else:
         if INIT == 'control':
             sequence = control_sequence;
         else:
-            sequence = permute_sequence(control_sequence)
+            (sequence,permute_by) = permute_sequence(control_sequence)
 
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
         del control_sequence[8:]
     return render_to_response('control_menu.html', 
-                              {'menu':random.sample(menu_groups, 12), 'sequence':control_sequence},
+                              {'menu':random.sample(menu_groups, 12), 'sequence':sequence},
                               context_instance=RequestContext(request))
 
 def adaptive(request, tut):

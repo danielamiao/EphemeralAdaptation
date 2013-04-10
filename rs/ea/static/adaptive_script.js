@@ -61,6 +61,7 @@ function openmenu(id) {
 		// update the start timer if this is the first time user opens a menu 
 		myDate = new Date();
 		starttime = myDate.getTime();
+		menu_opened = 1;
 	}
 }
 

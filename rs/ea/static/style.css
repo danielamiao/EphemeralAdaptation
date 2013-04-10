@@ -4,6 +4,21 @@ h2 {
 	font: bold 20px sans-serif;
 }
 
+.endbox {
+	text-align: center;
+	margin: 10px auto;
+}
+
+.endbox a {
+	position: absolute;
+	margin: 10px auto;
+}
+
+.endbox button {
+	position: absolute;
+	margin: 10px auto;
+}
+
 #menu {
 	margin: auto;
 	text-align: center;

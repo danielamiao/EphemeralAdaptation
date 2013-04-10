@@ -2,22 +2,9 @@
 var timeout = 300;
 var closetimer = 0;
 var menuitem = 0;
-
-// variables for the menu item selection
-// var sequence = [0, 4, 5, 16, 9, 13, 15, 0, 17, 4];
-// var predictions = [[0, 5, 2],
-//     		[4, 1, 3],
-// 		[5, 2, 3],
-// 		[17, 12, 13],
-// 		[7, 8, 11],
-// 		[12, 14, 17],
-// 		[15, 16, 17],
-// 		[1, 5, 4],
-// 		[13, 14, 15],
-// 		[0, 4, 5]
-// 		]
 var curpos = -1;
 var target = '-1';
+var menu_opened = 0;
 
 // variables of the timer
 var myDate = new Date();
@@ -70,9 +57,11 @@ function openmenu(id) {
 		itemarray[i].style.opacity = 1;
 	}
 
-	// update the start timer in case the user clicks on something here
-	myDate = new Date();
-	starttime = myDate.getTime();
+	if (menu_opened == 0) {
+		// update the start timer if this is the first time user opens a menu 
+		myDate = new Date();
+		starttime = myDate.getTime();
+	}
 }
 
 // close opened menus
@@ -110,7 +99,8 @@ function selectitem(itemid) {
 	if (target === itemid) {
 		// record the time taken to select the item
 		// if this is the correct selection, log the time 
-		var message = 'right ' + target + ' ' + itemid + ' ' + elapsed_time;
+		menu_opened = 0;
+		var message = 'adaptive right ' + target + ' ' + itemid + ' ' + elapsed_time;
 		console.log(message);
 
 		$.ajax({
@@ -136,7 +126,7 @@ function selectitem(itemid) {
 	}
 	else { 
 		// if this is not the correct selection, log the time and the error
-		var message = 'wrong ' + target + ' ' + itemid + ' ' + elapsed_time;
+		var message = 'adaptive wrong ' + target + ' ' + itemid + ' ' + elapsed_time;
 		console.log(message);
 
 		$.ajax({
@@ -150,7 +140,7 @@ function selectitem(itemid) {
 }
 
 function showend() {
-	document.getElementById('endbox').innerHTML = "Congratulations! You are done this section, click on continue to continue onto the next section!";
+	document.getElementById('endbox').style.display = 'block';
 }
 
 // close the menus whenever the user clicks on the page

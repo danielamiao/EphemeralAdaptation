@@ -1,8 +1,30 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse
-import random
-import itertools
+from django.http import HttpResponse, HttpResponseRedirect
+from django import forms
+import random, itertools, os, time
+
+# Classes for the forms used in the views
+class DemoForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    gender = forms.ChoiceField(choices=[("F", "Female"), ("M", "Male")], widget=forms.RadioSelect())
+    choices = ["20-24", "25-39", "30-34", "35-39", "40 and up"]
+    age = forms.ChoiceField(choices=[(x,x) for x in choices])
+    choices = ["Windows", "Mac", "Linux", "Other"]
+    usual_OS_used = forms.MultipleChoiceField(choices=[(x,x) for x in choices], widget=forms.CheckboxSelectMultiple)
+    left_handed = forms.BooleanField(required=False)
+
+class SurveyForm(forms.Form):
+    difficulty = forms.ChoiceField(choices=[(0, "Not Difficult At All"), (1, ""), (2, ""), (3, ""), (4, "Very Difficult")], widget=forms.RadioSelect())
+    satisfaction = forms.ChoiceField(choices=[(0, "Not Satisfied At All"), (1, ""), (2, ""), (3, ""), (4, "Very Satisfied")], widget=forms.RadioSelect())
+    efficiency = forms.ChoiceField(choices=[(0, "Not Efficient At All"), (1, ""), (2, ""), (3, ""), (4, "Very Efficient")], widget=forms.RadioSelect())
+    frustration = forms.ChoiceField(choices=[(0, "Not Frustrated At All"), (1, ""), (2, ""), (3, ""), (4, "Very Frustrated")], widget=forms.RadioSelect())
+
+class FinalForm(forms.Form):
+    difficulty = forms.ChoiceField(label="Which experiment was more difficult?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
+    satisfaction = forms.ChoiceField(label="Which experiment are you more satisfied with?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
+    efficiency = forms.ChoiceField(label="Which experiment were you more efficient in?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
+    frustration = forms.ChoiceField(label="Which experiment was more frustrating?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
 
 # Create your views here.
 
@@ -14,19 +36,107 @@ for row in menu_groups_file:
     menu_groups.append(row.strip().split(','))
 menu_groups_file.close()
 
-# define global variables
+# define constant variables for the experiment
 INIT = ''
+EXPERIMENT_SIZE = 12
+EXPERIMENT_SEQ = []
+for _ in itertools.repeat(None, EXPERIMENT_SIZE/2):
+    EXPERIMENT_SEQ.append(0)
+for _ in itertools.repeat(None, EXPERIMENT_SIZE/2):
+    EXPERIMENT_SEQ.append(1)
+random.shuffle(EXPERIMENT_SEQ)
+
+# define global variables used in the experiment
 control_sequence = []
 frequent_items = [[], [], []] # 3 possible permutations of frequent items
+exp_no = 0
+
 
 def index(request):
     return render_to_response('index.html')
 
 def record(request):
-    elapsed_time = request.GET['data']
+    message = request.GET['data']
+    if message == "Experiment Begins":
+        cur_dir = "ea/data"
+        new_dir = time.strftime("results_%Y%m%d%H%M%S")
+        for file in os.listdir(cur_dir):
+            if "log" in file:
+                try:
+                    old = cur_dir + '/' + file
+                    new = cur_dir + '/' + new_dir + '/'+ file
+                    os.renames(old, new)
+                except Error:
+                    print Error
     with open('ea/data/output.log', 'a+') as f:
-        f.write(elapsed_time + '\n')
+        f.write(message + '\n')
     return HttpResponse("yay")
+
+def demosurvey(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = DemoForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            print form.cleaned_data
+            with open('ea/data/demosurvey.log', 'w+') as f:
+                for key in form.cleaned_data:
+                    entry = form.cleaned_data[key]
+                    f.write(key + ': ' + str(entry) + '\n') 
+            if EXPERIMENT_SEQ[exp_no] == 0:
+                return HttpResponseRedirect('/ea/control/tut') # Redirect after POST
+            else:
+                return HttpResponseRedirect('/ea/adaptive/tut') # Redirect after POST
+    else:
+        form = DemoForm() # An unbound form
+
+    return render(request, 'demosurvey.html', {
+        'form': form,
+    })
+    
+def survey(request, cond):
+    if request.method == 'POST': # If the form has been submitted...
+        form = SurveyForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            print form.cleaned_data
+            with open('ea/data/' + cond +'_survey.log', 'w+') as f:
+                for key in form.cleaned_data:
+                    entry = form.cleaned_data[key]
+                    f.write(key + ': ' + str(entry) + '\n') 
+            if cond == 'control':
+                if EXPERIMENT_SEQ[exp_no] == 0:
+                    return HttpResponseRedirect('/ea/adaptive/tut') # Redirect after POST
+                else:
+                    return HttpResponseRedirect('/ea/finalsurvey') # Redirect after POST
+            else:
+                if EXPERIMENT_SEQ[exp_no] == 0:
+                    return HttpResponseRedirect('/ea/finalsurvey') # Redirect after POST
+                else:
+                    return HttpResponseRedirect('/ea/control/tut') # Redirect after POST
+    else:
+        form = SurveyForm() # An unbound form
+
+    return render(request, 'survey.html', {
+        'form': form,
+    })
+
+def finalsurvey(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = FinalForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            print form.cleaned_data
+            with open('ea/data/final_survey.log', 'w+') as f:
+                for key in form.cleaned_data:
+                    entry = form.cleaned_data[key]
+                    f.write(key + ': ' + str(entry) + '\n') 
+            return HttpResponseRedirect('/ea/done') # Redirect after POST
+    else:
+        form = FinalForm() # An unbound form
+
+    return render(request, 'finalsurvey.html', {
+        'form': form,
+    })
 
 def control(request, tut):
     # if sequence not generated, generate a random task sequence, 126 in length
@@ -35,7 +145,7 @@ def control(request, tut):
     global control_sequence, INIT
     if not control_sequence: 
         control_sequence = gen_sequence()
-	sequence = control_sequence
+        sequence = control_sequence
         INIT = 'control'
     else:
         if INIT == 'control':
@@ -45,9 +155,9 @@ def control(request, tut):
 
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
-        del control_sequence[8:]
+        sequence = control_sequence[:8]
     return render_to_response('control_menu.html', 
-                              {'menu':random.sample(menu_groups, 12), 'sequence':sequence},
+                              {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'tut':tut},
                               context_instance=RequestContext(request))
 
 def adaptive(request, tut):
@@ -67,13 +177,18 @@ def adaptive(request, tut):
 
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
-        del sequence[8:]
+        sequence = sequence[:8]
     return render_to_response('adaptive_menu.html', 
-                              {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'predictions':predictions},
+                              {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'predictions':predictions, 'tut': tut},
                               context_instance=RequestContext(request))
 
-def exit_survey(request):
-    return render_to_response('exit_survey.html')
+def done(request):
+    global INIT, exp_no
+    INIT = ''
+    exp_no = (exp_no+1) % 12
+    print EXPERIMENT_SEQ
+    print exp_no
+    return render_to_response('done.html')
 
 # Generates the task sequence to be selected by the user
 # For each of the 3 menus, 8 items are randomly selected (recall total number of items is 16)

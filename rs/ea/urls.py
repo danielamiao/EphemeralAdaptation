@@ -7,9 +7,12 @@ from django.conf.urls import patterns, include, url
 urlpatterns = patterns('ea.views',
     url(r'^$', 'index'),
     url(r'^record$', 'record'),
+    url(r'^demosurvey$', 'demosurvey'),
     url(r'^control/(tut)$', 'control'),
     url(r'^control()$', 'control'),
     url(r'^adaptive/(tut)$', 'adaptive'),
     url(r'^adaptive()$', 'adaptive'),
-    url(r'^done$', 'exit_survey'),
+    url(r'^survey_(\w+)$', 'survey'),
+    url(r'^finalsurvey$', 'finalsurvey'),
+    url(r'^done$', 'done'),
 )

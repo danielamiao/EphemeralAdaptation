@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>Daniela's Experiment for 6.831 UI Class</title>
+		<link rel="stylesheet" type="type/css" href="{{ STATIC_URL }}style.css"/>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			var message = "Experiment Begins";
+	                $.ajax({
+	                        type:"GET",
+	                        url:"record",
+	                        data: {
+	                                'data': message,
+	                        },
+	                });
+		</script>
+	</head>
+	<body>
+		<h3> 6.831 User Interface Design and Implementation Experiment</h3>
+		<!-- box showing instruction -->
+		<p id="instructions"> Hi, welcome to Daniela's Experiment for 6.831 UI Class, this experiment should take about
+			15-20 minutes in total. If at any point you do not wish to continue, please feel free to halt the experiment.
+			When you are ready to start, please click on the "Continue" button below. Thank you for your time.</p>
+			<a href="demosurvey"><button>Continue</button></a>
+	</body>
+</html>
+

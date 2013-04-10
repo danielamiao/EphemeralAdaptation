@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>Daniela's Experiment for 6.831 UI Class</title>
+		<link rel="stylesheet" type="type/css" href="{{ STATIC_URL }}form_style.css"/>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			var message = "Comparative Survey Begins";
+	                $.ajax({
+	                        type:"GET",
+	                        url:"record",
+	                        data: {
+	                                'data': message,
+	                        },
+	                });
+		</script>
+	</head>
+	<body>
+		<h3> Comparative Survey between Conditions</h3 
+		<!-- box showing instruction -->
+		<form action="" method="post">{% csrf_token %}
+			{{ form.as_p }}
+			<input type="submit" value="Submit" />
+		</form>
+	</body>
+</html>
+

@@ -83,9 +83,9 @@ def demosurvey(request):
                     entry = form.cleaned_data[key]
                     f.write(key + ': ' + str(entry) + '\n') 
             if EXPERIMENT_SEQ[exp_no] == 0:
-                return HttpResponseRedirect('/ea/control/tut') # Redirect after POST
+                return HttpResponseRedirect('control/tut') # Redirect after POST
             else:
-                return HttpResponseRedirect('/ea/adaptive/tut') # Redirect after POST
+                return HttpResponseRedirect('adaptive/tut') # Redirect after POST
     else:
         form = DemoForm() # An unbound form
 
@@ -105,14 +105,14 @@ def survey(request, cond):
                     f.write(key + ': ' + str(entry) + '\n') 
             if cond == 'control':
                 if EXPERIMENT_SEQ[exp_no] == 0:
-                    return HttpResponseRedirect('/ea/adaptive/tut') # Redirect after POST
+                    return HttpResponseRedirect('adaptive/tut') # Redirect after POST
                 else:
-                    return HttpResponseRedirect('/ea/finalsurvey') # Redirect after POST
+                    return HttpResponseRedirect('finalsurvey') # Redirect after POST
             else:
                 if EXPERIMENT_SEQ[exp_no] == 0:
-                    return HttpResponseRedirect('/ea/finalsurvey') # Redirect after POST
+                    return HttpResponseRedirect('finalsurvey') # Redirect after POST
                 else:
-                    return HttpResponseRedirect('/ea/control/tut') # Redirect after POST
+                    return HttpResponseRedirect('control/tut') # Redirect after POST
     else:
         form = SurveyForm() # An unbound form
 
@@ -130,7 +130,7 @@ def finalsurvey(request):
                 for key in form.cleaned_data:
                     entry = form.cleaned_data[key]
                     f.write(key + ': ' + str(entry) + '\n') 
-            return HttpResponseRedirect('/ea/done') # Redirect after POST
+            return HttpResponseRedirect('done') # Redirect after POST
     else:
         form = FinalForm() # An unbound form
 

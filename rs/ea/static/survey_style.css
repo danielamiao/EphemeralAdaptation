@@ -1,0 +1,28 @@
+label {
+	display: inline-block;
+}
+
+p > label {
+	font: bold 15px sans-serif;
+}
+
+p {
+	display: block;
+	margin: 15px;
+}
+
+input {
+	display: inline;
+}
+
+ul {
+	display: inline;
+	list-style:none
+	margin: auto;
+}
+
+li {
+	display: inline;
+	margin: 5px;
+}
+

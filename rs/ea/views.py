@@ -97,6 +97,7 @@ def record(request):
                     print Error
     with open('ea/data/output.log', 'a+') as f:
         f.write(message + '\n')
+	os.chmod('ea/data/output.log', 0o777)
     return HttpResponse("message written to file")
 
 # renders the Demographic Survey page

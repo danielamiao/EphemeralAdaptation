@@ -89,6 +89,16 @@ function cancelclosetimer() {
 	}
 }
 
+function isInList(num, list) {
+	result = false;
+	for(i in list) {
+		if(num == list[i]) { 
+			result = true; 
+		}
+	}
+	return result
+}
+	
 // item selected, check for correctness and log
 function selectitem(itemid) {
 	// first close the menu for good aesthetics
@@ -96,12 +106,14 @@ function selectitem(itemid) {
 	myDate = new Date();
 	endtime = myDate.getTime()
 	var elapsed_time = endtime - starttime;
+	var target_pred = isInList(target, predictions[curpos]);
+	var itemid_pred = isInList(itemid, predictions[curpos]);
 
 	if (target === itemid) {
 		// record the time taken to select the item
 		// if this is the correct selection, log the time 
 		menu_opened = 0;
-		var message = 'adaptive right ' + target + ' ' + itemid + ' ' + elapsed_time;
+		var message = 'adaptive right ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
 		console.log(message);
 
 		$.ajax({
@@ -127,7 +139,7 @@ function selectitem(itemid) {
 	}
 	else { 
 		// if this is not the correct selection, log the time and the error
-		var message = 'adaptive wrong ' + target + ' ' + itemid + ' ' + elapsed_time;
+		var message = 'adaptive wrong ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
 		console.log(message);
 
 		$.ajax({

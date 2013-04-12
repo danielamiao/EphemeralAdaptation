@@ -5,14 +5,14 @@
 		<link rel="stylesheet" type="type/css" href="{{ STATIC_URL }}style.css"/>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 		<script type="text/javascript">
-			var message = "Experiment Begins";
-	                $.ajax({
-	                        type:"GET",
-	                        url:"record",
-	                        data: {
-	                                'data': message,
-	                        },
-	                });
+			var message = "condition correctness target selected time target_predicted selected_predicted";
+			$.ajax({
+				type:"GET",
+				url:"record",
+				data: {
+					'data': message,
+				},
+			});
 		</script>
 	</head>
 	<body>

@@ -8,14 +8,6 @@
 		<!-- load the sequence separately from django due to template syntax ({ { } } syntax not recognized in external javascript file) -->
 		<script type="text/javascript">
 			var sequence = {{ sequence|jsonify }};
-			var message = "Control Condition Begin";
-	                $.ajax({
-	                        type:"GET",
-	                        url:"record",
-	                        data: {
-	                                'data': message,
-	                        },
-	                });
 		</script>
 		<script src="{{ STATIC_URL }}control_script.js" type="text/javascript"></script>
 	</head>

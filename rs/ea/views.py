@@ -57,7 +57,7 @@ def index(request):
 
 def record(request):
     message = request.GET['data']
-    if message == "Experiment Begins":
+    if message == "condition correctness target selected time target_predicted selected_predicted":
         cur_dir = "ea/data"
         new_dir = time.strftime("results_%Y%m%d%H%M%S")
         for file in os.listdir(cur_dir):

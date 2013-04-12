@@ -35,6 +35,8 @@ function settarget(target_id) {
         var menuname = item.parentNode.parentNode.parentNode.firstChild.innerHTML;
         var heading = document.getElementById('targetbox');
         heading.innerHTML = menuname + ' > ' + itemname;
+	var countbox = document.getElementById('countbox');
+	countbox.innerHTML = (curpos) + '/' + sequence.length
 
 	// set the predictions to show up right away instead of fading in
 	removefadeinclass(this.predictions[curpos]);
@@ -157,6 +159,8 @@ function selectitem(itemid) {
 }
 
 function showend() {
+	var countbox = document.getElementById('countbox');
+	countbox.innerHTML = (curpos+1) + '/' + sequence.length
 	document.getElementById('endbox').style.display = 'block';
 }
 

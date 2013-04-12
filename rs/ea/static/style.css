@@ -1,7 +1,21 @@
+#headerbox {
+	text-align: center;
+	margin: 20px auto;
+}
+
+#countbox{
+	display: inline;
+	margin: 20px auto;
+	padding-left: 50px;
+	text-align: center;
+	font: bold 20px helvetica;
+}
+
 #targetbox {
+	display: inline;
 	margin: 20px auto;
 	text-align: center;
-	font: bold 20px sans-serif;
+	font: bold 20px helvetica;
 }
 
 #menu {
@@ -12,7 +26,7 @@
 #menu li {
 	display: inline-block;
 	list-style: none;
-	font: bold 15px sans-serif;
+	font: bold 15px helvetica;
 }
 
 #menu li > a {

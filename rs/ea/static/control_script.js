@@ -19,7 +19,9 @@ function settarget(target_id) {
         var itemname = item.innerHTML;
         var menuname = item.parentNode.parentNode.parentNode.firstChild.innerHTML;
         var heading = document.getElementById('targetbox');
-        heading.innerHTML = menuname + ' > ' + itemname;
+        heading.innerHTML = menuname + ' > ' + itemname + ' ';
+	var countbox = document.getElementById('countbox');
+	countbox.innerHTML = (curpos) + '/' + sequence.length
 }
 
 // open the selected menu
@@ -123,6 +125,8 @@ function selectitem(itemid) {
 }
 
 function showend() {
+	var countbox = document.getElementById('countbox');
+	countbox.innerHTML = (curpos+1) + '/' + sequence.length
 	document.getElementById('endbox').style.display = 'block';
 }
 

@@ -8,23 +8,26 @@ import random, itertools, os, time
 class DemoForm(forms.Form):
     name = forms.CharField(max_length=100)
     gender = forms.ChoiceField(choices=[("F", "Female"), ("M", "Male")], widget=forms.RadioSelect())
-    choices = ["20-24", "25-39", "30-34", "35-39", "40 and up"]
+    choices = ["", "20-24", "25-39", "30-34", "35-39", "40 and up"]
     age = forms.ChoiceField(choices=[(x,x) for x in choices])
     choices = ["Windows", "Mac", "Linux", "Other"]
-    usual_OS_used = forms.MultipleChoiceField(choices=[(x,x) for x in choices], widget=forms.CheckboxSelectMultiple)
-    left_handed = forms.BooleanField(required=False)
+    usual_OS_used = forms.MultipleChoiceField(label="Which OS(es) do you normally use?", choices=[(x,x) for x in choices], widget=forms.CheckboxSelectMultiple)
+    choices = ["External Mouse", "Touchpad", "Trackpoint", "Other"]
+    usual_mouse_used = forms.MultipleChoiceField(label="Which type of mouse do you normally use?", choices=[(x,x) for x in choices], widget=forms.CheckboxSelectMultiple)
+    left_handed = forms.BooleanField(label="Are you left-handed?", required=False)
 
 class SurveyForm(forms.Form):
-    difficulty = forms.ChoiceField(choices=[(0, "Not Difficult At All"), (1, ""), (2, ""), (3, ""), (4, "Very Difficult")], widget=forms.RadioSelect())
-    satisfaction = forms.ChoiceField(choices=[(0, "Not Satisfied At All"), (1, ""), (2, ""), (3, ""), (4, "Very Satisfied")], widget=forms.RadioSelect())
-    efficiency = forms.ChoiceField(choices=[(0, "Not Efficient At All"), (1, ""), (2, ""), (3, ""), (4, "Very Efficient")], widget=forms.RadioSelect())
-    frustration = forms.ChoiceField(choices=[(0, "Not Frustrated At All"), (1, ""), (2, ""), (3, ""), (4, "Very Frustrated")], widget=forms.RadioSelect())
+    difficulty = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    satisfaction = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    efficiency = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    frustration = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
 
 class FinalForm(forms.Form):
-    difficulty = forms.ChoiceField(label="Which experiment was more difficult?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
-    satisfaction = forms.ChoiceField(label="Which experiment are you more satisfied with?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
-    efficiency = forms.ChoiceField(label="Which experiment were you more efficient in?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
-    frustration = forms.ChoiceField(label="Which experiment was more frustrating?", choices=[("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")])
+    choices=[("", ""), ("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")]
+    difficulty = forms.ChoiceField(label="Which experiment was more difficult?", choices=choices)
+    satisfaction = forms.ChoiceField(label="Which experiment are you more satisfied with?", choices=choices)
+    efficiency = forms.ChoiceField(label="Which experiment were you more efficient in?", choices=choices)
+    frustration = forms.ChoiceField(label="Which experiment was more frustrating?", choices=choices)
 
 # Create your views here.
 
@@ -53,7 +56,7 @@ exp_no = 0
 
 
 def index(request):
-    return render_to_response('index.html')
+    return render_to_response('index.html', {}, context_instance=RequestContext(request))
 
 def record(request):
     message = request.GET['data']

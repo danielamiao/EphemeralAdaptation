@@ -1,0 +1,51 @@
+======================content of demosurvey.log====================================
+left_handed: False
+name: Daniela Miao
+gender: F
+age: 20-24
+usual_mouse_used: [u'External Mouse']
+usual_OS_used: [u'Windows']
+
+
+
+======================content of control_survey.log====================================
+satisfaction: 5
+difficulty: 6
+frustration: 3
+efficiency: 4
+
+
+
+======================content of adaptive_survey.log====================================
+satisfaction: 5
+difficulty: 6
+frustration: 3
+efficiency: 4
+
+
+
+======================content of output.log====================================
+condition correctness target selected time target_predicted selected_predicted
+control right 12 12 2347 NA NA
+control right 34 34 983 NA NA
+control right 18 18 1102 NA NA
+adaptive right 28 28 1513 true true
+adaptive right 2 2 776 true true
+adaptive right 2 2 849 true true
+adaptive right 40 40 1340 true true
+adaptive right 34 34 775 true true
+adaptive right 37 37 1119 true true
+adaptive right 41 41 1337 true true
+adaptive right 2 2 1293 true true
+adaptive right 28 28 2531 true true
+adaptive right 41 41 1134 true true
+adaptive right 2 2 779 false false
+adaptive right 34 34 1629 true true
+
+
+======================content of final_survey.log====================================
+satisfaction: adaptive
+difficulty: control
+frustration: adaptive
+efficiency: control
+

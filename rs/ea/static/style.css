@@ -1,17 +1,7 @@
-h2 {
+#targetbox {
 	margin: 20px auto;
 	text-align: center;
 	font: bold 20px sans-serif;
-}
-
-.endbox a {
-	position: absolute;
-	margin: 10px auto;
-}
-
-.endbox button {
-	position: absolute;
-	margin: 10px auto;
 }
 
 #menu {
@@ -81,4 +71,15 @@ h2 {
 #menu div div a:hover {
 	background: #8106A9;
 	color: #FFF; 
+}
+
+.instructions,
+#endbox {
+	text-align: center;
+	margin: 20px auto;
+	background-color: #eeeeee;
+}
+
+div a {
+	display: inline-block;
 }

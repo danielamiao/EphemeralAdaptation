@@ -4,6 +4,7 @@
 	<head>
 		<title>RS1 Menu Control Condition</title>
 		<link rel="stylesheet" type="type/css" href="{{ STATIC_URL }}style.css"/>
+		<link rel="stylesheet" type="type/css" href="{{ STATIC_URL }}css/bootstrap.css"/>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 		<!-- load the sequence separately from django due to template syntax ({ { } } syntax not recognized in external javascript file) -->
 		<script type="text/javascript">
@@ -13,8 +14,17 @@
 		<script src="{{ STATIC_URL }}control_script.js" type="text/javascript"></script>
 	</head>
 	<body>
+		<div class="container instructions">
+			{% if tut == 1 %}
+			<h4>Static Menu Tutorial</h4>
+			<p>This is a short tutorial to help you get started, you will see 3 menus below, and above them there is a "target" menu item. Please go ahead and select that item. More will show up as you progress, after a few more practices a continue button will show you that leads you to the actual experiment.</p>
+			{% else %}
+			<h4>Static Menu Experiment</h4>
+			<p>Please go on and start selecting the shown menu item. A continue button will show up once this part of the experiment is completed.</p>
+			{% endif %}	
+		</div>
 		<!-- box showing task selection -->
-		<h2 id="targetbox"> </h2>
+		<h4 id="targetbox"> </h4>
 
 		<!-- dropdown menu -->
 		<ul id="menu">
@@ -48,11 +58,12 @@
 
 		<!-- box showing end of this task block -->
 		<div id="endbox" style="display:none">
-			<h2 id="message">Congratulations! You are done this section, click on the continue button to move onto the next section.</h2>
 			{% if tut == 1 %}
-			<a href='../control'><button>Continue to Next Section</button></a>
+			<h4 id="message">Finished Tutorial! Click on the continue button to move onto the Experiment.</h4>
+			<a href='../control' class="btn">Continue to Experiment</a>
 			{% else %}
-			<a href='survey_control'><button>Continue to Next Section</button></a>
+			<h4 id="message">Congratulations! You are done this section, click on the continue button to move onto the next section.</h4>
+			<a href='survey_control' class="btn">Continue to Next Section></a>
 			{% endif %}	
 		</div>
 	</body>

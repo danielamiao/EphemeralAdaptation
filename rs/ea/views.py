@@ -17,13 +17,17 @@ class DemoForm(forms.Form):
     left_handed = forms.BooleanField(label="Are you left-handed?", required=False)
 
 class SurveyForm(forms.Form):
-    difficulty = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
-    satisfaction = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
-    efficiency = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
-    frustration = forms.ChoiceField(choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    label = "How difficult did you find this experiment? (0 being Not Difficult At All, 6 being Extremely Difficult)"
+    difficulty = forms.ChoiceField(label=label, choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    label = "How satisfied are you with this experiment? (0 being Not Satisfied At All, 6 being Extremely Satisfied)"
+    satisfaction = forms.ChoiceField(label=label, choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    label = "How efficient were you during this experiment? (0 being Not Efficient At All, 6 being Extremely Efficient)"
+    efficiency = forms.ChoiceField(label=label, choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
+    label = "How frustrated were you during this experiment? (0 being Not Frustrated At All, 6 being Extremely Frustrated)"
+    frustration = forms.ChoiceField(label=label, choices=[(x,x) for x in xrange(7)], widget=forms.RadioSelect())
 
 class FinalForm(forms.Form):
-    choices=[("", ""), ("control", "No FadeIn Menu Items"), ("adaptive", "FadeIn Menu Items")]
+    choices=[("", ""), ("control", "Static Menu (No Predictions)"), ("adaptive", "Adaptive Menu (Has Predictions)")]
     difficulty = forms.ChoiceField(label="Which experiment was more difficult?", choices=choices)
     satisfaction = forms.ChoiceField(label="Which experiment are you more satisfied with?", choices=choices)
     efficiency = forms.ChoiceField(label="Which experiment were you more efficient in?", choices=choices)
@@ -197,7 +201,7 @@ def done(request):
     exp_no = (exp_no+1) % 12
     print EXPERIMENT_SEQ
     print exp_no
-    return render_to_response('done.html')
+    return render_to_response('done.html', {}, context_instance=RequestContext(request))
 
 # Generates the task sequence to be selected by the user
 # For each of the 3 menus, 8 items are randomly selected (recall total number of items is 16)

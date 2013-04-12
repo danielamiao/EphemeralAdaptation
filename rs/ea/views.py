@@ -59,8 +59,16 @@ for _ in itertools.repeat(None, NUM_TRIALS/2):
     TRIAL_SEQ.append(1)
 random.shuffle(TRIAL_SEQ)
 
+#DISTRIBUTION specifies the frequency of each menu item in the task sequence
+#it is also used to determine how long the task sequence is (since the number
+#means how many times a menu item is repeated)
+DISTRIBUTION = [15, 8, 5, 4, 3, 3, 2, 2] #zipf distribution
+
 #TUT_LENGTH specifies how many task items are in the tutorial
 TUT_LENGTH = 8
+
+#NUM_PRED defines how many predictions to make for the adaptive menu
+NUM_PRED = 3
 
 # define global variables used in each experiment
 control_sequence = []
@@ -203,7 +211,7 @@ def adaptive(request, tut):
                               {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'predictions':predictions, 'tut': tut},
                               context_instance=RequestContext(request))
 
-# Renders the Experiment Completed page, reset the INIT and control_sequence for next experiment
+# Renders the Experiment Completed page, reset the INIT and control_sequence for next experimenth
 # increment experiment number for the next experiment
 def done(request):
     global INIT, control_sequence, exp_no
@@ -218,32 +226,33 @@ def done(request):
 # Altogether, this makes a task sequence of length 126 
 def gen_sequence():
     global frequent_items
-    distribution = [15, 8, 5, 4, 3, 3, 2, 2] #zipf distribution
+    distribution = DISTRIBUTION #use the EXPERIMENT CONSTANT
+    len_dist = len(DISTRIBUTION)
     sequence = []
     menu_index = 0
     # Menu 1
     menu1_list = range(0,16)
-    sampled_menu1_list = random.sample(menu1_list, 8)
+    sampled_menu1_list = random.sample(menu1_list, len_dist)
     for index, item in enumerate(sampled_menu1_list):
         for _ in itertools.repeat(None, distribution[index]):
             sequence.append(item)   
     
     # Menu 2
     menu2_list = range(16,32)
-    sampled_menu2_list = random.sample(menu2_list, 8)
+    sampled_menu2_list = random.sample(menu2_list, len_dist)
     for index, item in enumerate(sampled_menu2_list):
         for _ in itertools.repeat(None, distribution[index]):
             sequence.append(item)
     
     # Menu 3
     menu3_list = range(32,48)
-    sampled_menu3_list = random.sample(menu3_list, 8)
+    sampled_menu3_list = random.sample(menu3_list, len_dist)
     for index, item in enumerate(sampled_menu3_list):
         for _ in itertools.repeat(None, distribution[index]):
             sequence.append(item)
     
     # The 3 most frequently selected items are stored for prediction use later
-    populate_freq_items(sampled_menu1_list[:3], sampled_menu2_list[:3], sampled_menu3_list[:3])
+    populate_freq_items(sampled_menu1_list[:NUM_PRED], sampled_menu2_list[:NUM_PRED], sampled_menu3_list[:NUM_PRED])
     random.shuffle(sequence)
     return sequence
 
@@ -310,7 +319,7 @@ def get_predictions(sequence, permute_no):
         
         predicted_set = frequent_items[permute_no][menu][:]
         if recent_item[menu] is not None and recent_item[menu] not in predicted_set:
-            predicted_set[2] = recent_item[menu] #replace the least frequent item with the most recently selected item
+            predicted_set[NUM_PRED-1] = recent_item[menu] #replace the least frequent item with the most recently selected item
         recent_item[menu] = item
         predictions.append(predicted_set)
     
@@ -341,10 +350,10 @@ def adjust_predictions(sequence, predictions):
         elif sequence[item] < 48:
             menu = 2
         
-        if predictions[item][2] == get_recent_item(sequence, menu, item): # if the last prediction item is the most recently selected item
-            predictions[item][1] = sequence[item] #replace the 2nd prediction item so the most recently selected item is kept
+        if predictions[item][NUM_PRED-1] == get_recent_item(sequence, menu, item): # if the last prediction item is the most recently selected item
+            predictions[item][NUM_PRED-2] = sequence[item] #replace the 2nd prediction item so the most recently selected item is kept
         else:
-            predictions[item][2] = sequence[item]
+            predictions[item][NUM_PRED-1] = sequence[item]
             
     return predictions
     
@@ -369,7 +378,7 @@ def accuracy_count(sequence,predictions):
     for index,item in enumerate(sequence):
         if item in predictions[index]:
             count = count + 1
-    print count/126.0
+    print count/(len(sequence)+0.0)
     return count
 
 

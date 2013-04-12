@@ -113,16 +113,18 @@ function selectitem(itemid) {
 		// record the time taken to select the item
 		// if this is the correct selection, log the time 
 		menu_opened = 0;
-		var message = 'adaptive right ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
-		console.log(message);
+		if (tut != 1) {
+			var message = 'adaptive right ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
+			console.log(message);
 
-		$.ajax({
-			type:"GET",
-			url:"record",
-			data: {
-				'data': message,
-			},      
-		});
+			$.ajax({
+				type:"GET",
+				url:"record",
+				data: {
+					'data': message,
+				},      
+			});
+		}
 		
 		// reinitialize the fadein class (default all fade so remove the previous predictions)	
 		addfadeinclass(predictions[curpos]);	
@@ -139,16 +141,18 @@ function selectitem(itemid) {
 	}
 	else { 
 		// if this is not the correct selection, log the time and the error
-		var message = 'adaptive wrong ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
-		console.log(message);
+		if (tut != 1) {
+			var message = 'adaptive wrong ' + target + ' ' + itemid + ' ' + elapsed_time + ' ' + target_pred + ' ' + itemid_pred;
+			console.log(message);
 
-		$.ajax({
-			type:"GET",
-			url:"record",
-			data: {
-				'data': message,
-			},      
-		});
+			$.ajax({
+				type:"GET",
+				url:"record",
+				data: {
+					'data': message,
+				},      
+			});
+		}
 	}
 }
 

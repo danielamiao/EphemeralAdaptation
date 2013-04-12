@@ -156,6 +156,9 @@ def control(request, tut):
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
         sequence = control_sequence[:8]
+        tut = 1
+    else: 
+        tut = 0
     return render_to_response('control_menu.html', 
                               {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'tut':tut},
                               context_instance=RequestContext(request))
@@ -178,6 +181,9 @@ def adaptive(request, tut):
     # if it's the tutorial page, truncate task sequence to 8 elements only
     if tut == 'tut':
         sequence = sequence[:8]
+        tut = 1
+    else:
+        tut = 0
     return render_to_response('adaptive_menu.html', 
                               {'menu':random.sample(menu_groups, 12), 'sequence':sequence, 'predictions':predictions, 'tut': tut},
                               context_instance=RequestContext(request))

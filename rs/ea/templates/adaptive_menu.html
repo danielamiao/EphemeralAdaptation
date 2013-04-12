@@ -9,6 +9,7 @@
 		<script type="text/javascript">
 			var sequence = {{ sequence|jsonify }};
 			var predictions = {{ predictions|jsonify }};
+			var tut = {{ tut }};
 		</script>
 		<script src="{{ STATIC_URL }}adaptive_script.js" type="text/javascript"></script>
 	</head>
@@ -49,7 +50,7 @@
 		<!-- box showing end of this task block -->
 		<div id="endbox" style="display:none">
 			<h2 id="message">Congratulations! You are done this section, click on the continue button to move onto the next section.</h2>
-			{% if tut == 'tut' %}
+			{% if tut == 1 %}
 			<a href='../adaptive'><button>Continue to Next Section</button></a>
 			{% else %}
 			<a href='survey_adaptive'><button>Continue to Next Section</button></a>

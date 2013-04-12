@@ -82,16 +82,19 @@ function selectitem(itemid) {
 		// record the time taken to select the item
 		// if this is the correct selection, log the time, reset menu_opened
 		menu_opened = 0;
-		var message = 'control right ' + target + ' ' + itemid + ' ' + elapsed_time + ' NA NA';
-		console.log(message);
-		
-		$.ajax({
-			type:"GET",
-			url:"record",
-			data: {
-				'data': message,
-			},
-		});
+
+		if (tut != 1) {
+			var message = 'control right ' + target + ' ' + itemid + ' ' + elapsed_time + ' NA NA';
+			console.log(message);
+			
+			$.ajax({
+				type:"GET",
+				url:"record",
+				data: {
+					'data': message,
+				},
+			});
+		}
 		
 		// if this is the last time, show the end for user to move on
 		if (curpos === sequence.length-1) {
@@ -105,15 +108,17 @@ function selectitem(itemid) {
 	}
 	else { 
 		// if this is not the correct selection, log the time and the error
-		var message = 'control wrong ' + target + ' ' + itemid + ' ' + elapsed_time + ' NA NA';
-		console.log(message);
-		$.ajax({
-			type:"GET",
-			url:"record",
-			data: {
-				'data': message,
-			},
-		});
+		if (tut != 1) {
+			var message = 'control wrong ' + target + ' ' + itemid + ' ' + elapsed_time + ' NA NA';
+			console.log(message);
+			$.ajax({
+				type:"GET",
+				url:"record",
+				data: {
+					'data': message,
+				},
+			});
+		}
 	}
 }
 
